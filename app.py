@@ -105,6 +105,7 @@ def submit_callsigns():
     return jsonify({"status": "success", "src_callsign": callsign, "dst_callsign": dst_callsign})
 
 
+
 @app.route('/send', methods=['POST'])
 def send():
     global serial_port, callsign, dst_callsign
