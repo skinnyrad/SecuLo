@@ -40,6 +40,10 @@
             <br>
             <br>
             <h3 style="color: antiquewhite;">CALLSIGNS</h3>
+            <div class="form-group">
+                <label for="current-callsigns">Current Callsigns</label>
+                <input type="text" class="form-control" id="current-callsigns" readonly>
+            </div>            
             <form id="submit-form">
                 <div class="form-group">
                     <label for="src-callsign">Source Callsign</label>
@@ -68,6 +72,12 @@
                     portSelect.append(new Option(port, port));
                 });
             });
+
+            const defaultSrcCallsign = 'SKINNY';
+            const defaultDstCallsign = 'BROADCAST';
+            $('#src-callsign').val(defaultSrcCallsign);
+            $('#dst-callsign').val(defaultDstCallsign);
+            $('#current-callsigns').val(defaultSrcCallsign +' (Source)' + ' <----> ' + defaultDstCallsign +' (Destination) ');
 
             // Handle connect form submission
             $('#connect-form').submit(function(event) {
@@ -100,7 +110,7 @@
                 data: JSON.stringify({ src_callsign: srcCallsign, dst_callsign: dstCallsign }),
                 success: function(response) {
                     if (response.status === 'success') {
-                        alert('Callsigns submitted: Source - ' + srcCallsign + ', Destination - ' + dstCallsign);
+                        alert('Callsigns submitted: ' + srcCallsign + ' (Source) and ' + dstCallsign + ' (Destination) ');
                         $('#src-callsign').val('');
                         $('#dst-callsign').val('');
                     } else {
@@ -137,6 +147,29 @@
                 output.scrollTop(output[0].scrollHeight);
             });
         });
+
+        $('#submit-form').submit(function(event) {
+            event.preventDefault();
+            const srcCallsign = $('#src-callsign').val();
+            const dstCallsign = $('#dst-callsign').val();
+            $.ajax({
+                url: '/submit_callsigns',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ src_callsign: srcCallsign, dst_callsign: dstCallsign }),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        //alert('Callsigns requested: ' + srcCallsign + ' (Source) <---> '+  dstCallsign + ' (Destination)');
+                        $('#src-callsign').val('');
+                        $('#dst-callsign').val('');
+                        $('#current-callsigns').val(srcCallsign + ' (Source) <---> '+  dstCallsign + ' (Destination)');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                }
+            });
+        });
+
     </script>
 
     

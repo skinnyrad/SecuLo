@@ -102,7 +102,7 @@ def submit_callsigns():
     if dst_callsign.upper() == "BROADCAST":
         dst_callsign = "BROADCAST"
     logging.debug(f"Submitted callsigns: Source - {callsign}, Destination - {dst_callsign}")
-    return jsonify({"status": "success"})
+    return jsonify({"status": "success", "src_callsign": callsign, "dst_callsign": dst_callsign})
 
 
 @app.route('/send', methods=['POST'])
