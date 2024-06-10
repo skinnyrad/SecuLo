@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('/static/img/backgroundimg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    overflow-x: hidden;
+}
+
+.message-window {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 10px;
+}
+
+.message .timestamp {
+    font-weight: bold;
+}
+
+.message.sent {
+    color: green;
+}
+
+.message.received {
+    color: blue;
+}
+
+/* Add this CSS rule to move the sidebar to the left */
+.col-md-3 {
+    padding-left: 0;
+    text-align: left;
+}
+
+.col-md-9 {
+    margin-left: 20px; /* Add some spacing between sidebar and main content */
+}
+
+label {
+    color: antiquewhite !important;
+  }
+  

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecuLo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <br>
+            <br>
+            <h3 style="color: antiquewhite; text-align: center;">SecuLo Messages</h3>
+            <textarea id="output" class="form-control" rows="10" readonly></textarea>
+            <br>
+            <h3 style="color: antiquewhite;">Send Message</h3>
+            <form id="send-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="message" placeholder="Enter message">
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+            <br>
+            <br>
+            <h3 style="color: antiquewhite;">Connect To A Serial Port</h3>
+            <form id="connect-form">
+                <div class="form-group">
+                    <label for="port-select">Select Port</label>
+                    <select class="form-control" id="port-select"></select>
+                </div>
+                <button type="submit" class="btn btn-primary">Connect</button>
+            </form>
+            <br>
+            <br>
+            <h3 style="color: antiquewhite;">CALLSIGNS</h3>
+            <form id="submit-form">
+                <div class="form-group">
+                    <label for="src-callsign">Source Callsign</label>
+                    <input type="text" class="form-control" id="src-callsign" placeholder="Enter your callsign (max 20 chars)" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="dst-callsign">Destination Callsign</label>
+                    <input type="text" class="form-control" id="dst-callsign" placeholder="Enter destination callsign (max 20 chars)" maxlength="20">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const socket = io();
+
+            // Fetch available serial ports
+            $.get('/get_ports', function(data) {
+                const portSelect = $('#port-select');
+                data.forEach(port => {
+                    portSelect.append(new Option(port, port));
+                });
+            });
+
+            // Handle connect form submission
+            $('#connect-form').submit(function(event) {
+                event.preventDefault();
+                const port = $('#port-select').val();
+                $.ajax({
+                    url: '/connect',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ port: port }),
+                    success: function(response) {
+                        if (response.status === 'connected') {
+                            alert('Connected to ' + port);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    }
+                });
+            });
+
+        // Handle submit form submission
+        $('#submit-form').submit(function(event) {
+            event.preventDefault();
+            const srcCallsign = $('#src-callsign').val();
+            const dstCallsign = $('#dst-callsign').val();
+            $.ajax({
+                url: '/submit_callsigns',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ src_callsign: srcCallsign, dst_callsign: dstCallsign }),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert('Callsigns submitted: Source - ' + srcCallsign + ', Destination - ' + dstCallsign);
+                        $('#src-callsign').val('');
+                        $('#dst-callsign').val('');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                }
+            });
+        });
+
+
+            // Handle send form submission
+            $('#send-form').submit(function(event) {
+                event.preventDefault();
+                const message = $('#message').val();
+                $.ajax({
+                    url: '/send',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ message: message }),
+                    success: function(response) {
+                        if (response.status === 'sent') {
+                            $('#message').val('');
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    }
+                });
+            });
+
+            // Handle incoming serial data
+            socket.on('serial_data', function(data) {
+                const output = $('#output');
+                output.val(output.val() + data.data + '\n');
+                output.scrollTop(output[0].scrollHeight);
+            });
+        });
+    </script>
+
+    
+</body>
+<footer>
+    <div style="color:antiquewhite; text-align: center;" >
+        Skinny Research and Development
+    </div>
+    <br>
+</footer>
+</html>
