@@ -95,6 +95,10 @@ def submit_callsigns():
         callsign = "SKINNY"
         dst_callsign = "BROADCAST"
         return jsonify({"status": "error", "message": "Callsign too long"})
+    if len(callsign) < 1:
+        callsign = 'SKINNY'
+    if len(dst_callsign) < 1:
+        dst_callsign = 'BROADCAST'
     if dst_callsign.upper() == "BROADCAST":
         dst_callsign = "BROADCAST"
     logging.debug(f"Submitted callsigns: Source - {callsign}, Destination - {dst_callsign}")
@@ -148,8 +152,9 @@ def read_from_port():
 
                     # Check if the message is intended for the current user
                     if dst_callsign.upper().strip() == 'BROADCAST' or dst_callsign.upper().strip() == callsign.upper().strip():
-                        msg_recv = f"👤 {src_callsign}->{dst_callsign}: {message_text}"
-                        socketio.emit('serial_data', {'data': msg_recv})
+                        if callsign.upper().strip() != src_callsign.upper().strip():
+                            msg_recv = f"👤 {src_callsign}->{dst_callsign}: {message_text}"
+                            socketio.emit('serial_data', {'data': msg_recv})
                     else:
                         logging.debug(f"Message not intended for {callsign}, ignoring.")
 
