@@ -48,6 +48,14 @@ cd SecuLo
 pip install -r requirements.txt
 ```
 
+On most Linux distributions, serial ports are owned by the dialout group. Adding your user to this group can grant the necessary permissions to access your Adafruit Feather M0.
+
+```bash
+sudo usermod -aG dialout $USER
+```
+
+After running this command, you need to log out and log back in for the changes to take effect.
+
 #### 4. **Run the application**:
 ```bash
 python app.py
