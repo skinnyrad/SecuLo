@@ -29,12 +29,9 @@ fi
 
 # Create a requirements.txt file
 cat <<EOT > requirements.txt
-beautifulsoup4==4.12.3
-Flask==2.3.2
+Flask==3.0.3
 Flask_SocketIO==5.3.6
-MarkupSafe==2.1.3
 pyserial==3.5
-Requests==2.31.0
 EOT
 
 # Install required Python packages
