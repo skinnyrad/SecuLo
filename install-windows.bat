@@ -25,7 +25,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 :: Create a requirements.txt file
 echo beautifulsoup4==4.12.3 > requirements.txt
-echo Flask==2.3.2 >> requirements.txt
+echo Flask==3.0.3 >> requirements.txt
 echo Flask_SocketIO==5.3.6 >> requirements.txt
 echo MarkupSafe==2.1.3 >> requirements.txt
 echo pyserial==3.5 >> requirements.txt
